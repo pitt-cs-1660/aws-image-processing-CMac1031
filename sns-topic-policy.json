@@ -7,13 +7,13 @@
           "Service": "s3.amazonaws.com"
         },
         "Action": "SNS:Publish",
-        "Resource": "arn:aws:sns:us-east-1:CHM212:image-processing-topic",
+        "Resource": "arn:aws:sns:us-east-1:822981068024:image-processing-topic",
         "Condition": {
           "StringEquals": {
-            "aws:SourceAccount": "CHM212"
+            "aws:SourceAccount": "822981068024"
           },
           "ArnLike": {
-            "aws:SourceArn": "arn:aws:s3:::<your-pitt-id>-assignment3"
+            "aws:SourceArn": "arn:aws:s3:::chm212-assignment3"
           }
         }
       }

@@ -1,25 +1,22 @@
 FROM public.ecr.aws/lambda/python:3.13
 
+# set working directory
+WORKDIR ${LAMBDA_TASK_ROOT}
+
 # install uv
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-############
-#
-# TODO: implement the rest of the image
-#
-############
+# copy project requirements file
 COPY pyproject.toml ${LAMBDA_TASK_ROOT}/
 
-#rest of your enviroment variables
-# build virtual environment and install dependencies
-WORKDIR ${LAMBDA_TASK_ROOT}
-COPY pyproject.toml ./
+RUN uv sync
 
-RUN uv venv .venv && \
-    uv pip install -e .
+# copy function code
+COPY handler.py ${LAMBDA_TASK_ROOT}/
 
-# Copy your Lambda handler code
-COPY . .
+#  sync the project
+RUN uv sync --locked --no-install-project --no-editable
+
 ## set PYTHONPATH to include the virtual environment site-packages
 ENV PYTHONPATH="${LAMBDA_TASK_ROOT}/.venv/lib/python3.13/site-packages"
 

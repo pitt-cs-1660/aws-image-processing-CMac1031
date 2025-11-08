@@ -7,7 +7,7 @@
           "s3:GetObject",
           "s3:PutObject"
         ],
-        "Resource": "arn:aws:s3:::<your pitt id>-assignment3/*"
+        "Resource": "arn:aws:s3:::chm212-assignment3/*"
       }
     ]
   }

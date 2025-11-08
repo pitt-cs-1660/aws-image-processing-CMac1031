@@ -52,33 +52,19 @@ def resize_handler(event, context):
                     #
                     ######
                     # download image from S3
+                    # download image from S3
                     image = download_from_s3(bucket_name, object_key)
+                    print(f"Downloaded image: {image.size}")
 
-                    # extract EXIF metadata
-                    exif_data = {
-                        'width': image.width,
-                        'height': image.height,
-                        'format': image.format,
-                        'mode': image.mode
-                    }
+                    # resize image to 512x512
+                    resized_image = image.resize((512, 512), Image.Resampling.LANCZOS)
+                    print(f"Resized to: {resized_image.size}")
 
-                    # extract EXIF tags if available
-                    if hasattr(image, 'getexif'):
-                        exif = image.getexif()
-                        if exif:
-                            for tag_id, value in exif.items():
-                                try:
-                                    exif_data[str(tag_id)] = str(value)
-                                except Exception as e:
-                                    print(f"Error processing tag {tag_id}: {e}")
-
-                    print(f"Extracted EXIF data: {json.dumps(exif_data, indent=2)}")
-
-                    # upload metadata to /processed/exif/ as JSON
+                    # upload processed image to /processed/resize/
                     from pathlib import Path
-                    filename = Path(object_key).stem  # @note: get filename without extension
-                    output_key = f"processed/exif/{filename}.json"
-                    upload_to_s3(bucket_name, output_key, json.dumps(exif_data, indent=2), 'application/json')
+                    filename = Path(object_key).name
+                    output_key = f"processed/resize/{filename}"
+                    upload_to_s3(bucket_name, output_key, resized_image)
                     print(f"Uploaded to: {output_key}")
                     processed_count += 1
 
